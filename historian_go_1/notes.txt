@@ -1,0 +1,5 @@
+2 lists as input, separated by spaces
+sort the 2 lists in asc order
+determine distance between corresponding indexes
+sum all distances to one number
+
