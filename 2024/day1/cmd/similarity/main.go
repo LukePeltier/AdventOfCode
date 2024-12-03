@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/lukepeltier/advent_2024/historian_go_1/internal/parser"
+	"github.com/lukepeltier/aoc/2024/day1/internal/parser"
 )
 
 func main() {

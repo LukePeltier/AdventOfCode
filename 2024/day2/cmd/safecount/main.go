@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/lukepeltier/advent_2024/rednose_go_2/internal/parser"
+	"github.com/lukepeltier/aoc/2024/day2/internal/parser"
 )
 
 func main() {

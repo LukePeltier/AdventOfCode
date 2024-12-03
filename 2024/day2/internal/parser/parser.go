@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/lukepeltier/advent_2024/rednose_go_2/internal/report"
+	"github.com/lukepeltier/aoc/2024/day2/internal/report"
 )
 
 func stringToLevel(strSlice []string) (report.LevelSlice, error) {
