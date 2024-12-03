@@ -1,5 +1,5 @@
-(executables
- (names main dayone)
- (public_names learning dayone)
- (libraries aoc))
+(executable
+ (name main)
+ (public_name aoc)
+ (libraries solutions utils))
 

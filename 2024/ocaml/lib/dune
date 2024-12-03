@@ -1,3 +1,3 @@
 (library
- (name aoc)
+ (name utils)
  (preprocess (pps ppx_deriving.show)))
