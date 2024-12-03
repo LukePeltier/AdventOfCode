@@ -1,5 +1,5 @@
-# Advent of Code 2024
+# Advent of Code
 
-This is my repo for the puzzle solving in the 2024 advent of code event
+This is my repo for the puzzle solving in the yearly advent of code event
 
-Learn more [here](https://adventofcode.com/2024)
+Learn more [here](https://adventofcode.com)
