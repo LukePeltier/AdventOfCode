@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/lukepeltier/aoc/2024/go/solutions"
+	"github.com/lukepeltier/AdventOfCode/2024/go/solutions"
 )
 
 func getInputFile(day int) string {
