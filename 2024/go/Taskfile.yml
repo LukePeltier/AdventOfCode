@@ -1,0 +1,42 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+    silent: true
+
+  build:
+    desc: Build the aoc binary
+    cmds:
+      - go build -o aoc
+
+  test:
+    desc: Run all tests
+    cmds:
+      - go test ./solutions -v
+
+  test-day:
+    desc: "Run tests for a specific day (usage: task test-day DAY=01)"
+    cmds:
+      - go test ./solutions -run TestDay{{.DAY}}
+
+  run:
+    desc: "Run a specific day's solution (usage: task run DAY=1)"
+    cmds:
+      - task: build
+      - ./aoc -d {{.DAY}}
+
+  run-bonus:
+    desc: "Run a specific day's bonus solution (usage: task run-bonus DAY=1)"
+    cmds:
+      - task: build
+      - ./aoc -d {{.DAY}} --bonus
+
+  clean:
+    desc: Remove the built binary
+    cmds:
+      - rm -f aoc
