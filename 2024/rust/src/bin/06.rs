@@ -2,7 +2,7 @@ use std::{collections::HashSet, process};
 
 advent_of_code::solution!(6);
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 enum Direction {
     Up,
     Right,
@@ -23,25 +23,31 @@ impl TryFrom<char> for Direction {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Guard {
     direction: Direction,
-    current_position: (i32, i32),
+    current_position: Coordinate,
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
-struct Location {
+struct Coordinate {
     row: i32,
     column: i32,
+}
+
+#[derive(Debug)]
+struct Location {
+    coordinate: Coordinate,
     obstacle: bool,
     visited: bool,
+    visited_direction: HashSet<Direction>,
 }
 
 type PatrolMap = Vec<Location>;
 
 fn get_max_dimensions(map: &PatrolMap) -> Result<usize, String> {
-    let max_row = map.iter().map(|item| item.row).max().unwrap() + 1;
-    let max_col = map.iter().map(|item| item.column).max().unwrap() + 1;
+    let max_row = map.iter().map(|item| item.coordinate.row).max().unwrap() + 1;
+    let max_col = map.iter().map(|item| item.coordinate.column).max().unwrap() + 1;
 
     let n = map.len();
     if usize::try_from(max_col).unwrap() * usize::try_from(max_row).unwrap() == n {
@@ -65,16 +71,22 @@ fn parse_input(input: &str) -> Result<(PatrolMap, Guard), &'static str> {
             continue;
         }
         let mut location = Location {
-            row: row_count,
-            column: col_count,
+            coordinate: Coordinate {
+                row: row_count,
+                column: col_count,
+            },
             obstacle: c == '#',
             visited: false,
+            visited_direction: HashSet::from([]),
         };
         if guard_chars.contains(&c) {
             location.visited = true;
             guard = Some(Guard {
                 direction: Direction::try_from(c).unwrap(),
-                current_position: (location.row, location.column),
+                current_position: Coordinate {
+                    row: location.coordinate.row,
+                    column: location.coordinate.column,
+                },
             });
         }
         map.push(location);
@@ -83,17 +95,16 @@ fn parse_input(input: &str) -> Result<(PatrolMap, Guard), &'static str> {
     Ok((map, guard.expect("No guard found")))
 }
 
-pub fn part_one(input: &str) -> Option<u64> {
-    let (mut puzzle_map, mut guard) = parse_input(input).unwrap();
+fn traverse_map(puzzle_map: &mut PatrolMap, guard: &mut Guard) -> Result<(), &'static str> {
     let max_dims = get_max_dimensions(&puzzle_map).unwrap().try_into().unwrap();
 
-    while guard.current_position.0 < max_dims
-        && guard.current_position.1 < max_dims
-        && guard.current_position.0 >= 0
-        && guard.current_position.1 >= 0
+    while guard.current_position.row < max_dims
+        && guard.current_position.column < max_dims
+        && guard.current_position.row >= 0
+        && guard.current_position.column >= 0
     {
-        let current_row = guard.current_position.0;
-        let current_col = guard.current_position.1;
+        let current_row = guard.current_position.row;
+        let current_col = guard.current_position.column;
         let current_direction = guard.direction;
 
         let mut desired_row = current_row;
@@ -116,7 +127,7 @@ pub fn part_one(input: &str) -> Option<u64> {
 
         let desired_location = match puzzle_map
             .iter_mut()
-            .find(|loc| loc.row == desired_row && loc.column == desired_col)
+            .find(|loc| loc.coordinate.row == desired_row && loc.coordinate.column == desired_col)
         {
             Some(l) => l,
             None => {
@@ -140,17 +151,32 @@ pub fn part_one(input: &str) -> Option<u64> {
             };
             continue;
         } else {
-            guard.current_position = (desired_row, desired_col);
+            guard.current_position = Coordinate {
+                row: desired_row,
+                column: desired_col,
+            };
             desired_location.visited = true;
+            desired_location.visited_direction.insert(guard.direction);
         }
     }
+
+    Ok(())
+}
+
+pub fn part_one(input: &str) -> Option<u64> {
+    let (mut puzzle_map, mut guard) = parse_input(input).unwrap();
+    let _ = traverse_map(&mut puzzle_map, &mut guard);
     let visited_locations_count = puzzle_map.into_iter().filter(|loc| loc.visited).count();
 
     Some(visited_locations_count.try_into().unwrap())
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
-    None
+    let (mut puzzle_map, mut guard) = parse_input(input).unwrap();
+    let original_guard = guard.clone();
+    let _ = traverse_map(&mut puzzle_map, &mut guard);
+    let visited_locations_count = puzzle_map.into_iter().filter(|loc| loc.visited).count();
+    Some(visited_locations_count.try_into().unwrap())
 }
 
 #[cfg(test)]
@@ -166,6 +192,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(6));
     }
 }
