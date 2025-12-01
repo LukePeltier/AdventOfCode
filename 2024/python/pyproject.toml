@@ -15,5 +15,4 @@ dev = [
 ]
 
 [tool.basedpyright]
-typeCheckingMode="off"
-reportUndefinedVariable=true
+typeCheckingMode="basic"
