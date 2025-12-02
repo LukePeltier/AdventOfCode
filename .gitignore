@@ -7,9 +7,6 @@ input.txt
 **/inputs/inputs/*
 !**/inputs/inputs/.keep
 !**/inputs/inputs/.gitkeep
-**/inputs/puzzles/*
-!**/inputs/puzzles/.keep
-!**/inputs/puzzles/.gitkeep
 
 # Dhat
 **/dhat-heap.json
